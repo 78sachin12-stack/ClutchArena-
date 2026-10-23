@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#060508">
+<title>Clutch Arena Admin</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Russo+One&display=swap">
+<style>
+:root{--bg:#060508;--surface:#111017;--surface2:#1a1520;--line:#2a1f26;--fg:#eef1ff;--muted:#9aa3c4;--accent:#ff2b2b;--good:#3dffa2;--warn:#ffb703;--font-d:"Russo One","Arial Black",sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(700px 400px at 90% -10%,rgba(255,43,43,.16),transparent 60%),var(--bg);color:var(--fg);font:500 18px/1.45 "Rajdhani",system-ui,sans-serif;padding-bottom:calc(24px + env(safe-area-inset-bottom,0px))}
+.bar{position:sticky;top:0;z-index:10;display:flex;justify-content:flex-start;align-items:center;gap:10px;padding:calc(10px + env(safe-area-inset-top,0px)) 16px 10px;background:rgba(6,5,8,.92);border-bottom:1px solid var(--line)}
+.brand{font:italic 400 1.2rem var(--font-d);letter-spacing:.05em}.brand span{color:var(--accent)}.brand small{font:700 .7rem "Rajdhani";letter-spacing:.2em;color:var(--muted);margin-left:6px}
+main{max-width:920px;margin:0 auto;padding:16px}
+h2{font:italic 400 1.5rem var(--font-d);text-transform:uppercase;margin:4px 0 14px}
+input,select,button{font:inherit;color:inherit}
+input,select{width:100%;min-height:46px;background:#0a0810;border:1px solid var(--line);border-radius:4px;padding:8px 12px;margin-top:4px}
+input[type=checkbox]{width:22px;min-height:22px;margin:0}
+input:focus-visible,select:focus-visible{outline:2px solid var(--accent)}
+label{display:block;font-size:.95rem;font-weight:700;color:var(--muted)}
+.btn{min-height:46px;border:0;padding:8px 18px;background:var(--accent);color:#fff;font:italic 400 .9rem var(--font-d);text-transform:uppercase;letter-spacing:.05em;cursor:pointer;clip-path:polygon(10px 0,100% 0,100% calc(100% - 10px),calc(100% - 10px) 100%,0 100%,0 10px)}
+.btn.ghost{background:#221a26}.btn.good{background:var(--good);color:#04150c}.btn.sm{min-height:38px;padding:6px 14px}.btn[disabled]{opacity:.5}
+.box{background:linear-gradient(180deg,var(--surface),#0b0910);border:1px solid var(--line);border-left:4px solid var(--accent);padding:14px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center}
+.muted{color:var(--muted);font-size:.95rem}.msg{color:var(--accent);min-height:1.3em;margin:8px 0}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:18px}
+.stat{background:var(--surface);border:1px solid var(--line);padding:14px}.stat b{display:block;font:400 1.9rem var(--font-d);color:var(--good)}.stat.hot b{color:var(--accent)}.stat span{color:var(--muted);font-size:.95rem}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}
+.tab{border:1px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;cursor:pointer;color:var(--muted);font-weight:700}
+.tab[aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff}
+.pill{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.8rem;font-weight:700;border:1px solid var(--line);margin-right:6px;text-transform:uppercase}
+.pill.paid,.pill.verified{color:var(--good);border-color:var(--good)}.pill.submitted{color:var(--warn);border-color:var(--warn)}.pill.rejected,.pill.refunded{color:var(--accent);border-color:var(--accent)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}
+.grid dt{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}.grid dd{margin:2px 0 0;font-weight:700;word-break:break-word}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:10px}
+.rh{font:italic 400 1.1rem var(--font-d);margin:18px 0 8px;color:var(--accent);text-transform:uppercase}
+.imgs img{width:100%;max-height:320px;object-fit:contain;background:#000;border:1px solid var(--line);margin:8px 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.rt{display:flex;gap:8px;align-items:center;margin-left:auto}
+.burger{position:relative;width:46px;height:46px;border:1px solid var(--line);background:#1a1520;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:5px;cursor:pointer;padding:0;border-radius:4px}
+.burger span{display:block;width:22px;height:2px;background:var(--fg);transition:transform .15s,opacity .15s}
+.burger[aria-expanded=true] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger[aria-expanded=true] span:nth-child(2){opacity:0}
+.burger[aria-expanded=true] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.burger:focus-visible,#tabbar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.burger i{position:absolute;top:-6px;right:-6px;background:var(--accent);color:#fff;border-radius:999px;font:700 .72rem "Rajdhani";padding:0 6px;font-style:normal;min-width:20px;text-align:center}
+#tabbar{position:absolute;left:12px;top:100%;margin-top:6px;z-index:20;display:none;flex-direction:column;min-width:210px;background:rgba(10,8,14,.98);border:1px solid var(--line);border-left:4px solid var(--accent);box-shadow:0 12px 30px rgba(0,0,0,.5)}
+#tabbar.open{display:flex}
+#tabbar button{background:none;border:0;border-bottom:1px solid var(--line);padding:14px 16px;min-height:50px;color:var(--muted);font:700 1rem "Rajdhani";text-transform:uppercase;letter-spacing:.06em;cursor:pointer;position:relative;text-align:left;display:flex;justify-content:space-between;align-items:center}
+#tabbar button:last-child{border-bottom:0}
+#tabbar button[aria-current=page]{color:#fff;background:rgba(255,43,43,.14)}
+#tabbar i{background:var(--accent);color:#fff;border-radius:999px;font:700 .72rem "Rajdhani";padding:0 8px;font-style:normal}
+.lbhead{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.lbrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-top:10px}
+.lbrow .nm{grid-column:1/-1}
+.lbtot{font:400 1.6rem var(--font-d);color:var(--good)}
+.lbadd{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}
+.lbadd label{flex:1 1 110px}
+.lbbar{position:sticky;bottom:0;display:flex;gap:8px;flex-wrap:wrap;padding:12px 0;background:linear-gradient(transparent,var(--bg) 30%)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="bar"><button class="burger" id="burger" type="button" hidden aria-label="Open menu" aria-expanded="false" aria-controls="tabbar"><span></span><span></span><span></span><i id="bbadge" hidden></i></button><div class="brand">CLUTCH<span>ARENA</span><small>ADMIN</small></div><div class="rt"><button class="btn ghost sm" id="logout" hidden>Log out</button></div>
+<nav id="tabbar" hidden aria-label="Admin menu">
+  <button data-v="overview">Overview</button><button data-v="pay">Payments<i id="badge" hidden></i></button><button data-v="rooms">Rooms</button><button data-v="daily">Daily</button><button data-v="bracket">Bracket</button><button data-v="lb">Leaderboard</button>
+</nav></div>
+<main>
+  <form class="box" id="loginForm" style="max-width:420px;margin:30px auto">
+    <h2>Admin login</h2>
+    <label for="ph">Mobile number</label><input id="ph" inputmode="numeric" maxlength="10" autocomplete="username">
+    <label for="pw" style="margin-top:12px">Password</label><input id="pw" type="password" autocomplete="current-password">
+    <div class="msg" id="loginMsg" role="alert"></div>
+    <button class="btn" type="submit">Log in</button>
+  </form>
+  <section id="v-overview" hidden></section>
+  <section id="v-pay" hidden></section>
+  <section id="v-rooms" hidden></section>
+  <section id="v-daily" hidden></section>
+  <section id="v-bracket" hidden></section>
+  <section id="v-lb" hidden></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+(function () {
+  var sb = window.supabase.createClient("https://bndmjqidmnbyvoklnfft.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJuZG1qcWlkbW5ieXZva2xuZmZ0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzOTU2MTEsImV4cCI6MjEwNzk3MTYxMX0._O5VKSRSrIoGiZ5ekDM6NBmSL9dlTp3VAqA4mtRUZjk");
+  var $ = function (id) { return document.getElementById(id); };
+  var regs = [], filter = "submitted", q = "", view = "overview";
+  function esc(v) { return String(v == null ? "" : v).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function when(t) { return t ? new Date(t).toLocaleString("en-IN", { dateStyle: "medium", timeStyle: "short" }) : "-"; }
+  function inr(n) { return "\u20B9" + Number(n || 0).toLocaleString("en-IN"); }
+  function call(n, a) { return sb.rpc(n, a).then(function (r) { if (r.error) { if (/not admin|login/i.test(r.error.message)) { sb.auth.signOut(); showLogin("This account is not an admin."); } throw r.error; } return r.data; }); }
+  function fail(e) { alert("Failed: " + (e && e.message ? e.message : e)); }
+
+  function showLogin(msg) {
+    $("loginForm").hidden = false; $("tabbar").hidden = true; $("logout").hidden = true; $("burger").hidden = true; closeMenu();
+    ["overview", "pay", "rooms", "daily", "bracket", "lb"].forEach(function (v) { $("v-" + v).hidden = true; });
+    $("loginMsg").textContent = msg || "";
+  }
+  function closeMenu() { $("tabbar").classList.remove("open"); $("burger").setAttribute("aria-expanded", "false"); $("burger").setAttribute("aria-label", "Open menu"); }
+  function setBadge(n) { $("badge").hidden = !n; $("badge").textContent = n; $("bbadge").hidden = !n; $("bbadge").textContent = n; }
+  function start() { $("loginForm").hidden = true; $("tabbar").hidden = false; $("logout").hidden = false; $("burger").hidden = false; go("overview"); }
+  function go(v) {
+    view = v; closeMenu();
+    ["overview", "pay", "rooms", "daily", "bracket", "lb"].forEach(function (x) { $("v-" + x).hidden = x !== v; });
+    Array.prototype.forEach.call(document.querySelectorAll("#tabbar button"), function (b) { b.setAttribute("aria-current", b.getAttribute("data-v") === v ? "page" : "false"); });
+    window.scrollTo(0, 0);
+    ({ overview: loadOverview, pay: loadPay, rooms: loadRooms, daily: loadDaily, bracket: loadBracket, lb: loadLb })[v]();
+  }
+
+  /* Overview */
+  function loadOverview() {
+    Promise.all([call("admin_stats"), call("admin_list_tournaments")]).then(function (r) {
+      var s = r[0], t = (r[1] || []).slice(0, 8);
+      setBadge(s.to_check);
+      $("v-overview").innerHTML = '<h2>Overview</h2><div class="stats">' +
+        '<div class="stat hot"><b>' + s.to_check + '</b><span>Payments to check</span></div>' +
+        '<div class="stat"><b>' + inr(s.revenue) + '</b><span>Confirmed revenue</span></div>' +
+        '<div class="stat"><b>' + s.paid + '</b><span>Paid players</span></div>' +
+        '<div class="stat"><b>' + s.bookings + '</b><span>Total bookings</span></div>' +
+        '<div class="stat"><b>' + s.today + '</b><span>Matches today</span></div>' +
+        '<div class="stat"><b>' + s.upcoming + '</b><span>Upcoming matches</span></div></div>' +
+        (s.to_check ? '<button class="btn" data-go="pay">Check ' + s.to_check + ' payment' + (s.to_check > 1 ? "s" : "") + '</button>' : '<p class="muted">All payments are checked.</p>') +
+        '<h2 style="margin-top:22px">Next matches</h2>' + t.map(function (x) {
+          return '<div class="box"><div class="row"><strong>' + esc(x.name) + '</strong><span class="muted">' + when(x.starts_at) + '</span></div><div class="muted">Booked ' + x.filled + '/' + x.slots + ' &middot; Paid ' + x.paid + ' &middot; Room ' + (x.room_id ? '<b style="color:var(--good)">set</b>' : '<b style="color:var(--accent)">not set</b>') + '</div></div>';
+        }).join("");
+    }).catch(fail);
+  }
+
+  /* Payments */
+  function loadPay() { call("admin_list_registrations").then(function (d) { regs = d || []; renderPay(); }).catch(fail); }
+  function renderPay() {
+    var n = function (s) { return regs.filter(function (x) { return x.payment_status === s; }).length; };
+    var tabs = [["submitted", "Needs check", n("submitted")], ["pending", "Not paid", n("pending")], ["paid", "Paid", n("paid")], ["refunded", "Refunded", n("refunded")], ["all", "All", regs.length]];
+    var list = regs.filter(function (x) {
+      if (filter !== "all" && x.payment_status !== filter) return false;
+      return !q || (x.team + " " + x.captain + " " + x.phone + " " + x.uid + " " + (x.utr || "")).toLowerCase().indexOf(q) > -1;
+    });
+    setBadge(n("submitted"));
+    var keep = document.activeElement && document.activeElement.id === "search";
+    $("v-pay").innerHTML = '<h2>Payments</h2><input id="search" placeholder="Search team, name, phone, UID, UTR" value="' + esc(q) + '">' +
+      '<div class="tabs">' + tabs.map(function (t) { return '<button class="tab" data-f="' + t[0] + '" aria-pressed="' + (filter === t[0]) + '">' + t[1] + " (" + t[2] + ")</button>"; }).join("") + '</div>' +
+      (list.length ? list.map(card).join("") : '<p class="muted">Nothing here.</p>');
+    if (keep) { var s = $("search"); s.focus(); s.setSelectionRange(s.value.length, s.value.length); }
+    Array.prototype.forEach.call($("v-pay").querySelectorAll("img[data-p]"), function (im) {
+      sb.storage.from("receipts").createSignedUrl(im.getAttribute("data-p"), 300).then(function (r) { if (r.data && r.data.signedUrl) im.src = r.data.signedUrl; else im.alt = "Could not load"; });
+    });
+  }
+  function card(x) {
+    var mates = (x.mates || []).map(esc).join(", ") || "-";
+    return '<article class="box" data-id="' + x.id + '"><div class="row"><div><strong>' + esc(x.team) + '</strong> <span class="muted">&middot; ' + esc(x.tournament) + '</span></div>' +
+      '<div><span class="pill ' + esc(x.payment_status) + '">pay: ' + esc(x.payment_status) + '</span><span class="pill ' + esc(x.uid_status) + '">uid: ' + esc(x.uid_status) + '</span></div></div>' +
+      '<dl class="grid"><div><dt>Captain</dt><dd>' + esc(x.captain) + '</dd></div><div><dt>Game UID</dt><dd>' + esc(x.uid) + '</dd></div>' +
+      '<div><dt>WhatsApp</dt><dd><a style="color:var(--accent)" href="https://wa.me/91' + esc(x.phone) + '">' + esc(x.phone) + '</a></dd></div>' +
+      '<div><dt>Prize UPI</dt><dd>' + esc(x.payout_upi || "-") + '</dd></div><div><dt>Fee</dt><dd>' + inr(x.fee) + '</dd></div><div><dt>UTR</dt><dd>' + esc(x.utr || "-") + '</dd></div><div><dt>Teammate UIDs</dt><dd>' + mates + '</dd></div>' +
+      '<div><dt>Booked</dt><dd>' + when(x.created_at) + '</dd></div><div><dt>Receipt sent</dt><dd>' + when(x.receipt_at) + '</dd></div></dl>' +
+      (x.receipt_path ? '<div class="imgs"><img data-p="' + esc(x.receipt_path) + '" alt="Receipt"></div>' : '') +
+      '<div class="actions"><button class="btn good sm" data-a="paid">Mark paid</button><button class="btn sm" data-a="refunded">Refund</button><button class="btn good sm" data-a="verified">UID ok</button><button class="btn sm" data-a="rejected">UID rejected</button></div></article>';
+  }
+  $("v-pay").addEventListener("input", function (e) { if (e.target.id === "search") { q = e.target.value.trim().toLowerCase(); renderPay(); } });
+  $("v-pay").addEventListener("click", function (e) {
+    var t = e.target.closest("button[data-f]");
+    if (t) { filter = t.getAttribute("data-f"); return renderPay(); }
+    var b = e.target.closest("button[data-a]"); if (!b) return;
+    var id = Number(b.closest("article").getAttribute("data-id")), a = b.getAttribute("data-a");
+    var pay = (a === "paid" || a === "refunded") ? a : null, uid = (a === "verified" || a === "rejected") ? a : null;
+    if (a === "refunded" && !confirm("Mark this registration as refunded?")) return;
+    b.disabled = true;
+    call("admin_set_status", { p_reg: id, p_payment: pay, p_uid_status: uid }).then(function () {
+      var row = regs.filter(function (x) { return x.id === id; })[0];
+      if (row) { if (pay) row.payment_status = pay; if (uid) row.uid_status = uid; }
+      renderPay();
+    }).catch(function (er) { b.disabled = false; fail(er); });
+  });
+
+  /* Rooms */
+  function loadRooms() {
+    call("admin_list_tournaments").then(function (list) {
+      $("v-rooms").innerHTML = '<h2>Room IDs</h2><p class="muted">Players see the Room ID and password only after you mark their payment as Paid.</p>' + ((list || []).length ? list.map(function (t) {
+        return '<article class="box" data-id="' + t.id + '"><div class="row"><strong>' + esc(t.name) + '</strong><span class="muted">' + when(t.starts_at) + ' &middot; paid ' + t.paid + '/' + t.filled + '</span></div>' +
+          '<div class="form"><label>Room ID<input data-f="rid" maxlength="40" value="' + esc(t.room_id || "") + '"></label><label>Password<input data-f="rpw" maxlength="40" value="' + esc(t.room_password || "") + '"></label></div>' +
+          '<div class="actions"><button class="btn good sm" data-save="1">Save</button></div></article>';
+      }).join("") : '<p class="muted">No upcoming tournaments.</p>');
+    }).catch(fail);
+  }
+  $("v-rooms").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-save]"); if (!b) return;
+    var c = b.closest("article"); b.disabled = true;
+    call("admin_set_room", { p_tournament: Number(c.getAttribute("data-id")), p_room_id: c.querySelector('[data-f="rid"]').value, p_password: c.querySelector('[data-f="rpw"]').value }).then(function () {
+      b.disabled = false; b.textContent = "Saved"; setTimeout(function () { b.textContent = "Save"; }, 1500);
+    }).catch(function (er) { b.disabled = false; fail(er); });
+  });
+
+  /* Daily templates */
+  function opt(list, v) { return list.map(function (o) { return '<option' + (o === v ? " selected" : "") + '>' + o + '</option>'; }).join(""); }
+  function tcard(t) {
+    t = t || { name: "", game: "BGMI", mode: "Online", fmt: "Solo", fee: 100, prize: 1000, slots: 50, place: "Custom room · Erangel", start_time: "20:00", active: true };
+    return '<article class="box" data-id="' + (t.id || "") + '"><div class="row"><strong>' + (t.id ? esc(t.name) : "New daily tournament") + '</strong><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" data-f="active"' + (t.active ? " checked" : "") + '> Active</label></div>' +
+      '<div class="form"><label>Name<input data-f="name" maxlength="60" value="' + esc(t.name) + '"></label>' +
+      '<label>Game<select data-f="game">' + opt(["BGMI", "Free Fire"], t.game) + '</select></label>' +
+      '<label>Format<select data-f="fmt">' + opt(["Solo", "Duo", "Squad"], t.fmt) + '</select></label>' +
+      '<label>Mode<select data-f="mode">' + opt(["Online", "Offline"], t.mode) + '</select></label>' +
+      '<label>Entry fee (&#8377;)<input data-f="fee" type="number" min="0" value="' + t.fee + '"></label>' +
+      '<label>Prize pool (&#8377;)<input data-f="prize" type="number" min="0" value="' + t.prize + '"></label>' +
+      '<label>Slots<input data-f="slots" type="number" min="1" value="' + t.slots + '"></label>' +
+      '<label>Start time (IST)<input data-f="start_time" type="time" value="' + esc(t.start_time) + '"></label>' +
+      '<label>Place and map (like: Custom room · Erangel)<input data-f="place" maxlength="60" value="' + esc(t.place) + '"></label></div>' +
+      '<div class="actions"><button class="btn good sm" data-save="1">Save</button></div></article>';
+  }
+  function loadDaily() {
+    call("admin_list_templates").then(function (list) {
+      $("v-daily").innerHTML = '<h2>Daily tournaments</h2><p class="muted">These are created automatically every night at 12:30 AM for the next 3 days. After editing, press "Apply and create now" to update upcoming matches that have no bookings yet. Matches that already have bookings keep their old settings.</p>' +
+        '<div class="actions" style="margin:0 0 14px"><button class="btn sm" id="gen">Apply and create now</button><button class="btn ghost sm" id="addT">Add new</button></div><div id="tlist">' + (list || []).map(tcard).join("") + '</div>';
+    }).catch(fail);
+  }
+  $("v-daily").addEventListener("click", function (e) {
+    if (e.target.id === "addT") { $("tlist").insertAdjacentHTML("afterbegin", tcard()); return; }
+    if (e.target.id === "gen") { e.target.disabled = true; call("admin_generate_now").then(function (n) { e.target.disabled = false; alert("Done. Upcoming matches updated. " + n + " new tournament" + (n === 1 ? "" : "s") + " created."); }).catch(function (er) { e.target.disabled = false; fail(er); }); return; }
+    var b = e.target.closest("[data-save]"); if (!b) return;
+    var c = b.closest("article"), p = { id: c.getAttribute("data-id") || null };
+    Array.prototype.forEach.call(c.querySelectorAll("[data-f]"), function (f) { p[f.getAttribute("data-f")] = f.type === "checkbox" ? f.checked : f.value; });
+    if (!p.name.trim()) return alert("Please enter a name.");
+    b.disabled = true;
+    call("admin_save_template", { p: p }).then(function (id) { c.setAttribute("data-id", id); b.disabled = false; b.textContent = "Saved"; setTimeout(function () { b.textContent = "Save"; }, 1500); }).catch(function (er) { b.disabled = false; fail(er); });
+  });
+
+  /* Knockout bracket */
+  var brT = null, tlist = [], brData = [], brMax = 0;
+  function rname(r, max) { var rem = max - r; return rem === 0 ? "Final" : rem === 1 ? "Semi-final" : rem === 2 ? "Quarter-final" : "Round of " + Math.pow(2, rem + 1); }
+  function loadBracket() {
+    call("admin_list_tournaments").then(function (list) {
+      tlist = list || [];
+      if (!tlist.some(function (t) { return t.id === brT; })) brT = tlist.length ? tlist[0].id : null;
+      if (brT) refreshBracket(); else drawBracket([]);
+    }).catch(fail);
+  }
+  function refreshBracket() { call("admin_get_bracket", { p_tournament: brT }).then(function (d) { brData = d || []; drawBracket(brData); }).catch(fail); }
+  function mcard(m) {
+    var nm = function (n, id) { return id ? esc(n) : '<i class="muted">TBD</i>'; };
+    var ready = m.a && m.b, out = '<article class="box" data-m="' + m.id + '"><div class="row"><b>' + nm(m.a_name, m.a) + '</b><span class="muted">vs</span><b>' + nm(m.b_name, m.b) + '</b></div>';
+    if (!ready) return out + '<p class="muted">Waiting for earlier matches.</p></article>';
+    out += '<div class="actions"><button class="btn good sm" data-win="' + m.a + '"' + (m.winner === m.a ? " disabled" : "") + '>' + esc(m.a_name) + ' wins</button><button class="btn good sm" data-win="' + m.b + '"' + (m.winner === m.b ? " disabled" : "") + '>' + esc(m.b_name) + ' wins</button>' + (m.winner ? '<button class="btn ghost sm" data-win="">Undo</button>' : '') + '</div>';
+    if (m.winner) out += '<p class="muted">Winner: <b style="color:var(--good)">' + esc(m.winner === m.a ? m.a_name : m.b_name) + '</b></p>';
+    if (m.winner && m.round === brMax) {
+      var wu = m.winner === m.a ? m.a_upi : m.b_upi, wn = m.winner === m.a ? m.a_name : m.b_name;
+      out += '<div class="box" style="border-left-color:var(--good)"><b>Champion prize: ' + inr(m.prize) + '</b><p class="muted">Pay to UPI: <b>' + esc(wu || "-") + '</b></p><div class="actions"><button class="btn sm" data-copy="' + esc(wu || "") + '">Copy UPI</button><a class="btn good sm" style="text-decoration:none;display:inline-flex;align-items:center" href="upi://pay?pa=' + encodeURIComponent(wu || "") + '&amp;pn=' + encodeURIComponent(wn) + '&amp;am=' + m.prize + '&amp;cu=INR&amp;tn=Prize">Pay in UPI app</a></div></div>';
+    }
+    return out + '<div class="form"><label>Room ID<input data-f="rid" maxlength="40" value="' + esc(m.room_id || "") + '"></label><label>Password<input data-f="rpw" maxlength="40" value="' + esc(m.room_password || "") + '"></label></div><div class="actions"><button class="btn sm" data-room="1">Save room</button></div></article>';
+  }
+  function drawBracket(ms) {
+    var max = ms.reduce(function (a, m) { return Math.max(a, m.round); }, 0); brMax = max;
+    var opts = tlist.map(function (t) { return '<option value="' + t.id + '"' + (t.id === brT ? " selected" : "") + '>' + esc(t.name) + " - " + when(t.starts_at) + " (paid " + t.paid + ")</option>"; }).join("");
+    var h = '<h2>Knockout bracket</h2><p class="muted">Pick a tournament, generate the bracket from its PAID teams (random pairs, byes are added automatically), then tap the winner of each match. The next round fills itself.</p>' +
+      (tlist.length ? '<label>Tournament<select id="brSel">' + opts + '</select></label><div class="actions"><button class="btn sm" id="brGen">' + (ms.length ? "Re-generate bracket" : "Generate bracket") + '</button></div>' : '<p class="muted">No tournaments yet.</p>');
+    if (!ms.length) h += '<p class="muted">No bracket yet for this tournament.</p>';
+    for (var r = 1; r <= max; r++) h += '<h3 class="rh">' + rname(r, max) + '</h3>' + ms.filter(function (m) { return m.round === r && (r > 1 || (m.a && m.b)); }).map(mcard).join("");
+    $("v-bracket").innerHTML = h;
+  }
+  $("v-bracket").addEventListener("change", function (e) { if (e.target.id === "brSel") { brT = Number(e.target.value); refreshBracket(); } });
+  $("v-bracket").addEventListener("click", function (e) {
+    var t = e.target, cp = t.closest("[data-copy]");
+    if (cp) { if (navigator.clipboard) navigator.clipboard.writeText(cp.getAttribute("data-copy")); return; }
+    if (t.id === "brGen") {
+      var has = brData.length > 0;
+      if (has && !confirm("This deletes the current bracket and all results. Continue?")) return;
+      t.disabled = true;
+      call("admin_generate_bracket", { p_tournament: brT, p_replace: has }).then(function (r) { t.disabled = false; alert("Bracket ready: " + r.teams + " teams, " + r.rounds + " rounds."); refreshBracket(); }).catch(function (er) { t.disabled = false; fail(er); });
+      return;
+    }
+    var w = t.closest("[data-win]"), rm = t.closest("[data-room]");
+    if (!w && !rm) return;
+    var card = t.closest("article"), id = Number(card.getAttribute("data-m"));
+    if (w) { w.disabled = true; call("admin_set_winner", { p_match: id, p_winner: w.getAttribute("data-win") ? Number(w.getAttribute("data-win")) : null }).then(refreshBracket).catch(function (er) { w.disabled = false; fail(er); }); }
+    else { rm.disabled = true; call("admin_set_match_room", { p_match: id, p_room_id: card.querySelector('[data-f="rid"]').value, p_password: card.querySelector('[data-f="rpw"]').value }).then(function () { rm.disabled = false; rm.textContent = "Saved"; setTimeout(function () { rm.textContent = "Save room"; }, 1500); }).catch(function (er) { rm.disabled = false; fail(er); }); }
+  });
+
+
+  /* Leaderboard updater */
+  var lbAll = [], lbRows = [], lbG = "BGMI", lbF = "Squad", PTS = [15, 12, 10, 8, 6, 4, 2, 1];
+  function lbTot(r) { return (Number(r.placement) || 0) + (Number(r.kills) || 0); }
+  function loadLb() {
+    sb.from("leaderboard").select("*").then(function (r) {
+      if (r.error) return fail(r.error);
+      lbAll = r.data || []; pickLb();
+    });
+  }
+  function pickLb() {
+    lbRows = lbAll.filter(function (x) { return x.game === lbG && x.fmt === lbF; }).map(function (x) {
+      return { name: x.name || "", matches: Number(x.matches) || 0, placement: Number(x.placement) || 0, kills: Number(x.kills) || 0 };
+    });
+    renderLb();
+  }
+  function renderLb(msg) {
+    lbRows.sort(function (a, b) { return lbTot(b) - lbTot(a); });
+    var places = '<option value="0">Below 8th (0 pts)</option>' + PTS.map(function (p, i) { return '<option value="' + (i + 1) + '">' + (i + 1) + ' (' + p + ' pts)</option>'; }).join("");
+    $("v-lb").innerHTML = '<h2>Leaderboard</h2><p class="muted">Pick a game and format, add each match result, then press Save. Placement points: 1st 15, 2nd 12, 3rd 10, 4th 8, 5th 6, 6th 4, 7th 2, 8th 1. Each kill is 1 point. Saving replaces the list for this game and format on the website.</p>' +
+      '<div class="lbhead"><label>Game<select id="lbG">' + opt(["BGMI", "Free Fire"], lbG) + '</select></label><label>Format<select id="lbF">' + opt(["Solo", "Duo", "Squad"], lbF) + '</select></label></div>' +
+      (lbRows.length ? lbRows.map(function (r, i) {
+        return '<article class="box" data-i="' + i + '"><div class="row"><strong>#' + (i + 1) + '</strong><span class="lbtot">' + lbTot(r) + '</span></div>' +
+          '<div class="lbrow"><label class="nm">Name<input data-k="name" maxlength="40" value="' + esc(r.name) + '"></label>' +
+          '<label>Matches<input data-k="matches" type="number" min="0" inputmode="numeric" value="' + r.matches + '"></label>' +
+          '<label>Placement pts<input data-k="placement" type="number" min="0" inputmode="numeric" value="' + r.placement + '"></label>' +
+          '<label>Kills<input data-k="kills" type="number" min="0" inputmode="numeric" value="' + r.kills + '"></label></div>' +
+          '<div class="lbadd"><label>New match: finished<select data-f="pos">' + places + '</select></label><label>Kills<input data-f="k" type="number" min="0" inputmode="numeric" value="0"></label><button class="btn sm" data-add="1" type="button">Add match</button><button class="btn ghost sm" data-del="1" type="button">Remove</button></div></article>';
+      }).join("") : '<p class="muted">No teams yet for ' + esc(lbG) + ' ' + esc(lbF) + '. Add the first one.</p>') +
+      '<div class="lbbar"><button class="btn ghost sm" id="lbNew" type="button">Add team</button><button class="btn good" id="lbSave" type="button">Save leaderboard</button></div><div class="msg" id="lbMsg" role="status">' + esc(msg || "") + '</div>';
+  }
+  $("v-lb").addEventListener("change", function (e) {
+    if (e.target.id === "lbG") { lbG = e.target.value; pickLb(); }
+    else if (e.target.id === "lbF") { lbF = e.target.value; pickLb(); }
+  });
+  $("v-lb").addEventListener("input", function (e) {
+    var k = e.target.getAttribute("data-k"); if (!k) return;
+    var c = e.target.closest("article"), r = lbRows[Number(c.getAttribute("data-i"))]; if (!r) return;
+    r[k] = k === "name" ? e.target.value : Math.max(0, Math.floor(Number(e.target.value) || 0));
+    c.querySelector(".lbtot").textContent = lbTot(r);
+  });
+  $("v-lb").addEventListener("click", function (e) {
+    var t = e.target;
+    if (t.id === "lbNew") { lbRows.push({ name: "", matches: 0, placement: 0, kills: 0 }); return renderLb(); }
+    if (t.id === "lbSave") {
+      var rows = lbRows.map(function (r) { return { name: r.name.trim(), matches: r.matches, placement: r.placement, kills: r.kills }; });
+      if (rows.some(function (r) { return !r.name; })) return ($("lbMsg").textContent = "Every team needs a name.");
+      var seen = {}; for (var i = 0; i < rows.length; i++) { var n = rows[i].name.toLowerCase(); if (seen[n]) return ($("lbMsg").textContent = "Two teams are named " + rows[i].name + ". Use different names."); seen[n] = 1; }
+      t.disabled = true; $("lbMsg").textContent = "Saving...";
+      call("admin_set_leaderboard", { p_game: lbG, p_fmt: lbF, p_rows: rows }).then(function () {
+        lbAll = lbAll.filter(function (x) { return !(x.game === lbG && x.fmt === lbF); }).concat(rows.map(function (r) { return { game: lbG, fmt: lbF, name: r.name, matches: r.matches, placement: r.placement, kills: r.kills }; }));
+        renderLb("Saved. The website leaderboard is updated.");
+      }).catch(function (er) { t.disabled = false; $("lbMsg").textContent = "Could not save: " + (er && er.message ? er.message : er); });
+      return;
+    }
+    var c = t.closest("article"); if (!c) return;
+    var r = lbRows[Number(c.getAttribute("data-i"))]; if (!r) return;
+    if (t.getAttribute("data-del")) { lbRows.splice(lbRows.indexOf(r), 1); return renderLb(); }
+    if (t.getAttribute("data-add")) {
+      var pos = Number(c.querySelector('[data-f="pos"]').value), k = Math.max(0, Math.floor(Number(c.querySelector('[data-f="k"]').value) || 0));
+      r.matches += 1; r.placement += pos ? PTS[pos - 1] : 0; r.kills += k;
+      renderLb("Match added for " + (r.name || "team") + ". Press Save to publish.");
+    }
+  });
+
+  /* Shell */
+  $("burger").addEventListener("click", function () {
+    var open = !$("tabbar").classList.contains("open");
+    $("tabbar").classList.toggle("open", open);
+    $("burger").setAttribute("aria-expanded", String(open));
+    $("burger").setAttribute("aria-label", open ? "Close menu" : "Open menu");
+  });
+  document.addEventListener("click", function (e) { if (!e.target.closest("#tabbar") && !e.target.closest("#burger")) closeMenu(); });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeMenu(); $("burger").focus(); } });
+  $("tabbar").addEventListener("click", function (e) { var b = e.target.closest("button[data-v]"); if (b) go(b.getAttribute("data-v")); });
+  $("v-overview").addEventListener("click", function (e) { var b = e.target.closest("[data-go]"); if (b) go(b.getAttribute("data-go")); });
+  $("loginForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var ph = $("ph").value.trim(), pw = $("pw").value;
+    if (!/^[6-9][0-9]{9}$/.test(ph)) return ($("loginMsg").textContent = "Enter a valid 10-digit number.");
+    $("loginMsg").textContent = "";
+    sb.auth.signInWithPassword({ email: ph + "@clutcharena.in", password: pw }).then(function (r) {
+      if (r.error) return ($("loginMsg").textContent = "Incorrect number or password.");
+      $("pw").value = ""; call("admin_stats").then(start).catch(function () {});
+    });
+  });
+  $("logout").addEventListener("click", function () { sb.auth.signOut().then(function () { showLogin(""); }); });
+  sb.auth.getSession().then(function (r) { if (r.data && r.data.session) call("admin_stats").then(start).catch(function () {}); });
+})();
+</script>
+</body>
+</html>
